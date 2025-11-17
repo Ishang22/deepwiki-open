@@ -1,0 +1,100 @@
+════════════════════════════════════════════════════════════════
+🚀 QUICK START: MapiGuru Integration for DeepWiki
+════════════════════════════════════════════════════════════════
+
+📋 STEP 1: Edit .env file
+────────────────────────────────────────────────────────────────
+nano /Users/ishan.garg/Downloads/ONE_SHOP/deepwiki-open/.env
+
+Add these lines:
+  MAPIGURU_BASE_URL=https://chat.mapiguru.yo-digital.com
+  DEEPWIKI_EMBEDDER_TYPE=mapiguru
+
+Keep Azure lines as-is (for text generation):
+  AZURE_OPENAI_ENDPOINT=https://openai-os-2.openai.azure.com/
+  AZURE_OPENAI_API_KEY=17e563494a534e2785ed381b2e6699ad
+  AZURE_OPENAI_DEPLOYMENT=gpt-4o
+  AZURE_OPENAI_VERSION=2023-12-01-preview
+
+Save: Ctrl+X → Y → Enter
+
+
+📋 STEP 2: Restart DeepWiki
+────────────────────────────────────────────────────────────────
+cd /Users/ishan.garg/Downloads/ONE_SHOP/deepwiki-open
+./restart-deepwiki.sh
+
+
+📋 STEP 3: Verify It's Working
+────────────────────────────────────────────────────────────────
+tail -f /tmp/deepwiki_backend.log
+
+Look for:
+  ✅ "MapiGuru client initialized"
+  ✅ "Calling MapiGuru API"
+
+
+📋 STEP 4: Generate Wiki
+────────────────────────────────────────────────────────────────
+Open: http://localhost:3000
+Enter: /Users/ishan.garg/Downloads/ONE_SHOP/eshop-bff
+Click: Generate Wiki
+
+Expected: Fast, stable processing (10-20 min for 7K files)
+
+
+════════════════════════════════════════════════════════════════
+✨ WHAT WE CHANGED
+════════════════════════════════════════════════════════════════
+
+1. Created custom MapiGuru client (api/mapiguru_client.py)
+2. Registered it in DeepWiki config system
+3. Added mapiguru embedder configuration
+4. Enabled "mapiguru" as embedder type
+
+Result: DeepWiki now uses your internal embedding service!
+
+
+════════════════════════════════════════════════════════════════
+🎯 WHY THIS MATTERS
+════════════════════════════════════════════════════════════════
+
+YOUR CURL COMMANDS:
+  GET  /embeddings/getEmbeddingModels  → Lists available models
+  POST /embeddings/extract             → Converts text → vectors
+
+WHAT EMBEDDINGS DO:
+  "Order System"     → [0.2, 0.8, -0.3, ...]  (numbers)
+  "Shopping Cart"    → [0.1, 0.7, -0.2, ...]  (similar = close)
+  "Weather Service"  → [0.9, -0.5, 0.4, ...]  (different = far)
+
+WHY DEEPWIKI NEEDS THEM:
+  Code Files → Embeddings → Vector DB → AI Search → Generate Wiki
+  Your Question → Embedding → Find Similar Code → Answer
+
+BENEFITS OF YOUR SERVICE:
+  ✅ FREE (no OpenAI costs)
+  ✅ FAST (internal network)
+  ✅ PRIVATE (data stays in yo-digital.com)
+  ✅ STABLE (no Ollama crashes!)
+
+
+════════════════════════════════════════════════════════════════
+📚 MORE INFO
+════════════════════════════════════════════════════════════════
+
+Full guide: ./MAPIGURU_SETUP.md
+Backend logs: tail -f /tmp/deepwiki_backend.log
+Frontend logs: tail -f /tmp/deepwiki_frontend.log
+
+Test MapiGuru API:
+  curl https://chat.mapiguru.yo-digital.com/embeddings/getEmbeddingModels
+
+
+════════════════════════════════════════════════════════════════
+🎉 YOU'RE READY!
+════════════════════════════════════════════════════════════════
+
+Just update .env → restart → generate wiki!
+No more Ollama crashes! 🚀
+
