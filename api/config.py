@@ -13,6 +13,7 @@ from api.bedrock_client import BedrockClient
 from api.google_embedder_client import GoogleEmbedderClient
 from api.azureai_client import AzureAIClient
 from api.dashscope_client import DashscopeClient
+from api.mapiguru_client import MapiGuruClient
 from adalflow import GoogleGenAIClient, OllamaClient
 
 # Get API keys from environment variables
@@ -23,6 +24,8 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_REGION = os.environ.get('AWS_REGION')
 AWS_ROLE_ARN = os.environ.get('AWS_ROLE_ARN')
+MAPIGURU_BASE_URL = os.environ.get('MAPIGURU_BASE_URL')
+MAPIGURU_API_KEY = os.environ.get('MAPIGURU_API_KEY')
 
 # Set keys in environment (in case they're needed elsewhere in the code)
 if OPENAI_API_KEY:
@@ -39,6 +42,10 @@ if AWS_REGION:
     os.environ["AWS_REGION"] = AWS_REGION
 if AWS_ROLE_ARN:
     os.environ["AWS_ROLE_ARN"] = AWS_ROLE_ARN
+if MAPIGURU_BASE_URL:
+    os.environ["MAPIGURU_BASE_URL"] = MAPIGURU_BASE_URL
+if MAPIGURU_API_KEY:
+    os.environ["MAPIGURU_API_KEY"] = MAPIGURU_API_KEY
 
 # Wiki authentication settings
 raw_auth_mode = os.environ.get('DEEPWIKI_AUTH_MODE', 'False')
@@ -60,7 +67,8 @@ CLIENT_CLASSES = {
     "OllamaClient": OllamaClient,
     "BedrockClient": BedrockClient,
     "AzureAIClient": AzureAIClient,
-    "DashscopeClient": DashscopeClient
+    "DashscopeClient": DashscopeClient,
+    "MapiGuruClient": MapiGuruClient
 }
 
 def replace_env_placeholders(config: Union[Dict[str, Any], List[Any], str, Any]) -> Union[Dict[str, Any], List[Any], str, Any]:
@@ -149,7 +157,7 @@ def load_embedder_config():
     embedder_config = load_json_config("embedder.json")
 
     # Process client classes
-    for key in ["embedder", "embedder_ollama", "embedder_google"]:
+    for key in ["embedder", "embedder_ollama", "embedder_google", "embedder_mapiguru"]:
         if key in embedder_config and "client_class" in embedder_config[key]:
             class_name = embedder_config[key]["client_class"]
             if class_name in CLIENT_CLASSES:
@@ -169,6 +177,8 @@ def get_embedder_config():
         return configs.get("embedder_google", {})
     elif embedder_type == 'ollama' and 'embedder_ollama' in configs:
         return configs.get("embedder_ollama", {})
+    elif embedder_type == 'mapiguru' and 'embedder_mapiguru' in configs:
+        return configs.get("embedder_mapiguru", {})
     else:
         return configs.get("embedder", {})
 
@@ -217,9 +227,12 @@ def get_embedder_type():
     Get the current embedder type based on configuration.
     
     Returns:
-        str: 'ollama', 'google', or 'openai' (default)
+        str: 'ollama', 'google', 'mapiguru', or 'openai' (default)
     """
-    if is_ollama_embedder():
+    # First check EMBEDDER_TYPE environment variable directly
+    if EMBEDDER_TYPE == 'mapiguru':
+        return 'mapiguru'
+    elif is_ollama_embedder():
         return 'ollama'
     elif is_google_embedder():
         return 'google'
@@ -316,7 +329,7 @@ if generator_config:
 
 # Update embedder configuration
 if embedder_config:
-    for key in ["embedder", "embedder_ollama", "embedder_google", "retriever", "text_splitter"]:
+    for key in ["embedder", "embedder_ollama", "embedder_google", "embedder_mapiguru", "retriever", "text_splitter"]:
         if key in embedder_config:
             configs[key] = embedder_config[key]
 
