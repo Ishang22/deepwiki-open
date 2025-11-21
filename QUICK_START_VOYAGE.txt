@@ -1,0 +1,133 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                   VOYAGE AI EMBEDDINGS - QUICK START GUIDE                     ║
+║                          DeepWiki Integration                                  ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+📋 OVERVIEW
+-----------
+Voyage AI provides state-of-the-art embedding models with superior performance.
+This guide will help you set up Voyage AI embeddings in DeepWiki.
+
+✨ FEATURES
+-----------
+• State-of-the-art performance with voyage-3-large model
+• Specialized models: code, legal, and financial documents
+• 200M free tokens per model (no credit card required)
+• Matryoshka learning and quantization-aware training
+• Efficient batch processing (up to 128 texts per batch)
+
+🚀 QUICK SETUP (3 STEPS)
+-------------------------
+
+STEP 1: Get Your API Key
+------------------------
+1. Visit: https://dash.voyageai.com
+2. Sign up or log in
+3. Generate your API key
+4. Copy the key (starts with "pa-")
+
+STEP 2: Configure Environment
+------------------------------
+Add to your .env file (or export in terminal):
+
+    export VOYAGE_API_KEY="pa-ySmYuKQdAQby_CVBou8T_dGPkCPZVkG2ZvlyJk0nPgh"
+    export DEEPWIKI_EMBEDDER_TYPE="voyage"
+
+STEP 3: Restart DeepWiki
+-------------------------
+    ./restart-deepwiki.sh
+
+OR with Docker:
+    docker-compose down
+    docker-compose up -d
+
+✅ VERIFY INSTALLATION
+-----------------------
+Run the test script:
+    ./test-voyage.sh
+
+Or run the unit tests:
+    python3 tests/unit/test_voyage_embedder.py
+
+🎯 AVAILABLE MODELS
+-------------------
+Model               | Use Case                  | Dimensions | Context
+--------------------|---------------------------|------------|----------
+voyage-3-large      | General (recommended)     | 1024       | 32K
+voyage-3.5          | Latest improvements       | 1024       | 32K
+voyage-code-3       | Code repositories         | 1024       | 16K
+voyage-law-2        | Legal documents           | 1024       | 16K
+voyage-finance-2    | Financial documents       | 1024       | 16K
+
+⚙️ ADVANCED CONFIGURATION
+--------------------------
+Edit api/config/embedder.json to customize:
+
+{
+  "embedder_voyage": {
+    "client_class": "VoyageClient",
+    "batch_size": 128,
+    "model_kwargs": {
+      "model": "voyage-3-large",
+      "input_type": "document",      // or "query"
+      "truncation": true
+    }
+  }
+}
+
+💡 TIPS
+-------
+• Use "document" input_type for texts to be retrieved
+• Use "query" input_type for search queries
+• voyage-code-3 is best for code repositories
+• 200M free tokens = ~400,000 document embeddings
+• Add payment method for higher rate limits
+
+🔍 TROUBLESHOOTING
+-------------------
+Issue: "VOYAGE_API_KEY is required but not set"
+Fix:   export VOYAGE_API_KEY="your-key-here"
+
+Issue: Rate limit errors
+Fix:   Add payment method at https://dash.voyageai.com
+       Or reduce batch_size in embedder.json
+
+Issue: Model not found
+Fix:   Verify model name in embedder.json matches available models
+
+📚 RESOURCES
+------------
+• Full Setup Guide:    VOYAGE_SETUP.md
+• API Documentation:   https://docs.voyageai.com
+• Voyage Dashboard:    https://dash.voyageai.com
+• Pricing:             https://www.voyageai.com/pricing
+
+🆘 SUPPORT
+----------
+DeepWiki Issues:  https://github.com/AsyncFuncAI/deepwiki-open/issues
+Voyage AI Email:  contact@voyageai.com
+Voyage AI FAQ:    https://www.voyageai.com/faq
+
+═══════════════════════════════════════════════════════════════════════════════
+
+EXAMPLE: Complete Setup Commands
+---------------------------------
+
+# 1. Set API key
+export VOYAGE_API_KEY="pa-ySmYuKQdAQby_CVBou8T_dGPkCPZVkG2ZvlyJk0nPgh"
+export DEEPWIKI_EMBEDDER_TYPE="voyage"
+
+# 2. Test the connection
+./test-voyage.sh
+
+# 3. Restart DeepWiki
+./restart-deepwiki.sh
+
+# 4. Generate wiki for a repository
+# Visit: http://localhost:3000
+# Enter repo URL and start generating!
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Happy embedding with Voyage AI! 🚀
+

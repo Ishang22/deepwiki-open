@@ -26,7 +26,7 @@
 - **Ask Feature**: Chat with your repository using RAG-powered AI to get accurate answers
 - **DeepResearch**: Multi-turn research process that thoroughly investigates complex topics
 - **Multiple Model Providers**: Support for Google Gemini, OpenAI, OpenRouter, and local Ollama models
-- **Flexible Embeddings**: Choose between OpenAI, Google AI, or local Ollama embeddings for optimal performance
+- **Flexible Embeddings**: Choose between OpenAI, Google AI, Voyage AI, MapiGuru, or local Ollama embeddings for optimal performance
 
 ## 🚀 Quick Start (Super Easy!)
 
@@ -209,12 +209,17 @@ OPENROUTER_API_KEY=your_openrouter_api_key # Required for OpenRouter models
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key  #Required for Azure OpenAI models
 AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint  #Required for Azure OpenAI models
 AZURE_OPENAI_VERSION=your_azure_openai_version  #Required for Azure OpenAI models
+VOYAGE_API_KEY=your_voyage_api_key        # Required for Voyage AI embeddings
+MAPIGURU_API_KEY=your_mapiguru_api_key    # Required for MapiGuru embeddings
 
 # OpenAI API Base URL Configuration
 OPENAI_BASE_URL=https://custom-api-endpoint.com/v1  # Optional, for custom OpenAI API endpoints
 
 # Ollama host
 OLLAMA_HOST=your_ollama_host # Optional, if Ollama is not local. default: http://localhost:11434
+
+# MapiGuru Configuration
+MAPIGURU_BASE_URL=https://your-mapiguru-instance.com # Optional, defaults to https://chat.mapiguru.yo-digital.com
 
 # Configuration Directory
 DEEPWIKI_CONFIG_DIR=/path/to/custom/config/dir  # Optional, for custom config file location
@@ -331,6 +336,8 @@ docker-compose up
 |------|-------------|------------------|-------|
 | `openai` | OpenAI embeddings (default) | `OPENAI_API_KEY` | Uses `text-embedding-3-small` model |
 | `google` | Google AI embeddings | `GOOGLE_API_KEY` | Uses `text-embedding-004` model |
+| `voyage` | Voyage AI embeddings | `VOYAGE_API_KEY` | Uses `voyage-3-large` model (state-of-the-art) |
+| `mapiguru` | MapiGuru embeddings | `MAPIGURU_API_KEY` | Self-hosted embedding service |
 | `ollama` | Local Ollama embeddings | None | Requires local Ollama installation |
 
 ### Why Use Google AI Embeddings?
@@ -339,6 +346,93 @@ docker-compose up
 - **Performance**: Google's latest embedding model offers excellent performance for retrieval tasks
 - **Cost**: Competitive pricing compared to OpenAI
 - **No Additional Setup**: Uses the same API key as your text generation models
+
+## 🚀 Using Voyage AI Embeddings
+
+DeepWiki now supports Voyage AI's state-of-the-art embedding models, including `voyage-3-large` and specialized models for code, legal, and financial documents. Voyage AI provides industry-leading embedding performance with Matryoshka learning and quantization-aware training.
+
+### Features
+
+- **State-of-the-Art Performance**: Uses Voyage's latest `voyage-3-large` model with superior retrieval quality
+- **Specialized Models**: Choose from models optimized for code (`voyage-code-3`), legal (`voyage-law-2`), or financial documents (`voyage-finance-2`)
+- **Free Tier**: 200M free tokens per model (no credit card required)
+- **Flexible Configuration**: Support for document and query input types
+- **Efficient Batching**: Process up to 128 texts per batch
+
+### How to Enable Voyage AI Embeddings
+
+**Option 1: Environment Variable (Recommended)**
+
+1. Get your API key from [Voyage AI Dashboard](https://dash.voyageai.com)
+2. Set the environment variables:
+
+```bash
+# Set your Voyage AI API key
+export VOYAGE_API_KEY=your_voyage_api_key
+
+# Enable Voyage AI embeddings
+export DEEPWIKI_EMBEDDER_TYPE=voyage
+```
+
+**Option 2: Docker Environment**
+
+```bash
+docker run -p 8001:8001 -p 3000:3000 \
+  -e VOYAGE_API_KEY=your_voyage_api_key \
+  -e DEEPWIKI_EMBEDDER_TYPE=voyage \
+  -v ~/.adalflow:/root/.adalflow \
+  ghcr.io/asyncfuncai/deepwiki-open:latest
+```
+
+**Option 3: Docker Compose**
+
+Add to your `.env` file:
+
+```bash
+VOYAGE_API_KEY=your_voyage_api_key
+DEEPWIKI_EMBEDDER_TYPE=voyage
+```
+
+Then run:
+
+```bash
+docker-compose up
+```
+
+### Available Voyage AI Models
+
+You can configure which Voyage AI model to use by editing `api/config/embedder.json`:
+
+```json
+{
+  "embedder_voyage": {
+    "client_class": "VoyageClient",
+    "batch_size": 128,
+    "model_kwargs": {
+      "model": "voyage-3-large",
+      "input_type": "document",
+      "truncation": true
+    }
+  }
+}
+```
+
+**Available Models:**
+- `voyage-3-large` (default) - Best general-purpose embedding model
+- `voyage-3.5` - Latest model with improved performance
+- `voyage-code-3` - Optimized for code repositories
+- `voyage-law-2` - Specialized for legal documents
+- `voyage-finance-2` - Optimized for financial documents
+
+### Why Use Voyage AI Embeddings?
+
+- **Superior Performance**: State-of-the-art retrieval quality with Matryoshka learning
+- **Specialized Models**: Choose the right model for your specific use case (code, legal, finance)
+- **Generous Free Tier**: 200M free tokens per model with no credit card required
+- **Production Ready**: Higher rate limits available with payment method
+- **Latest Technology**: Quantization-aware training for efficient embeddings
+
+For detailed setup instructions, see [VOYAGE_SETUP.md](VOYAGE_SETUP.md).
 
 ### Switching Between Embedders
 
@@ -350,6 +444,14 @@ export DEEPWIKI_EMBEDDER_TYPE=openai
 
 # Use Google AI embeddings
 export DEEPWIKI_EMBEDDER_TYPE=google
+
+# Use Voyage AI embeddings (state-of-the-art performance)
+export DEEPWIKI_EMBEDDER_TYPE=voyage
+export VOYAGE_API_KEY=your_voyage_api_key
+
+# Use MapiGuru embeddings (self-hosted)
+export DEEPWIKI_EMBEDDER_TYPE=mapiguru
+export MAPIGURU_API_KEY=your_mapiguru_api_key
 
 # Use local Ollama embeddings
 export DEEPWIKI_EMBEDDER_TYPE=ollama
@@ -406,7 +508,10 @@ docker-compose up
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint                    | No | Required only if you want to use Azure OpenAI models                                                       |
 | `AZURE_OPENAI_VERSION` | Azure OpenAI version                     | No | Required only if you want to use Azure OpenAI models                                                       |
 | `OLLAMA_HOST`        | Ollama Host (default: http://localhost:11434)                | No | Required only if you want to use external Ollama server                                                  |
-| `DEEPWIKI_EMBEDDER_TYPE` | Embedder type: `openai`, `google`, or `ollama` (default: `openai`) | No | Controls which embedding provider to use                                                              |
+| `DEEPWIKI_EMBEDDER_TYPE` | Embedder type: `openai`, `google`, `voyage`, `mapiguru`, or `ollama` (default: `openai`) | No | Controls which embedding provider to use                                                              |
+| `VOYAGE_API_KEY` | Voyage AI API key for embeddings | No | Required only if using Voyage AI embeddings (`DEEPWIKI_EMBEDDER_TYPE=voyage`) |
+| `MAPIGURU_API_KEY` | MapiGuru API key for embeddings | No | Required only if using MapiGuru embeddings (`DEEPWIKI_EMBEDDER_TYPE=mapiguru`) |
+| `MAPIGURU_BASE_URL` | MapiGuru base URL | No | Optional, defaults to `https://chat.mapiguru.yo-digital.com` |
 | `PORT`               | Port for the API server (default: 8001)                      | No | If you host API and frontend on the same machine, make sure change port of `SERVER_BASE_URL` accordingly |
 | `SERVER_BASE_URL`    | Base URL for the API server (default: http://localhost:8001) | No |
 | `DEEPWIKI_AUTH_MODE` | Set to `true` or `1` to enable authorization mode. | No | Defaults to `false`. If enabled, `DEEPWIKI_AUTH_CODE` is required. |
@@ -414,7 +519,9 @@ docker-compose up
 
 **API Key Requirements:**
 - If using `DEEPWIKI_EMBEDDER_TYPE=openai` (default): `OPENAI_API_KEY` is required
-- If using `DEEPWIKI_EMBEDDER_TYPE=google`: `GOOGLE_API_KEY` is required  
+- If using `DEEPWIKI_EMBEDDER_TYPE=google`: `GOOGLE_API_KEY` is required
+- If using `DEEPWIKI_EMBEDDER_TYPE=voyage`: `VOYAGE_API_KEY` is required
+- If using `DEEPWIKI_EMBEDDER_TYPE=mapiguru`: `MAPIGURU_API_KEY` is required  
 - If using `DEEPWIKI_EMBEDDER_TYPE=ollama`: No API key required (local processing)
 
 Other API keys are only required when configuring and using models from the corresponding providers.

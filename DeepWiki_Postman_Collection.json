@@ -1,0 +1,208 @@
+{
+  "info": {
+    "name": "DeepWiki API with Voyage AI",
+    "description": "Complete API collection for DeepWiki with Voyage AI embeddings",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "voyageApiKey",
+      "value": "pa-ySmYuKQdAQby_CVBou8T_dGPkCPZVkG2ZvlyJk0nPgh",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Check if the DeepWiki backend is running and healthy"
+      }
+    },
+    {
+      "name": "Get Models Configuration",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/models/config",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "models", "config"]
+        },
+        "description": "Get available AI models and providers configuration"
+      }
+    },
+    {
+      "name": "Get Processed Projects",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/wiki/projects",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "wiki", "projects"]
+        },
+        "description": "List all repositories that have been processed"
+      }
+    },
+    {
+      "name": "Chat with Repository (Azure GPT-4o)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"What is the main purpose of this repository?\",\n  \"repoUrl\": \"https://github.com/AsyncFuncAI/deepwiki-open\",\n  \"provider\": \"azure\",\n  \"model\": \"gpt-4o\",\n  \"language\": \"en\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat", "stream"]
+        },
+        "description": "Ask questions about a repository using Azure GPT-4o with Voyage AI embeddings"
+      }
+    },
+    {
+      "name": "Chat with Repository (Google Gemini)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Explain the architecture of this project\",\n  \"repoUrl\": \"https://github.com/AsyncFuncAI/deepwiki-open\",\n  \"provider\": \"google\",\n  \"model\": \"gemini-2.5-flash\",\n  \"language\": \"en\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat", "stream"]
+        },
+        "description": "Ask questions about a repository using Google Gemini"
+      }
+    },
+    {
+      "name": "Deep Research Mode",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Perform a deep analysis of the authentication system\",\n  \"repoUrl\": \"https://github.com/AsyncFuncAI/deepwiki-open\",\n  \"provider\": \"azure\",\n  \"model\": \"gpt-4o\",\n  \"language\": \"en\",\n  \"deepResearch\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "chat", "stream"]
+        },
+        "description": "Use deep research mode for comprehensive analysis"
+      }
+    },
+    {
+      "name": "Voyage AI - Test Embeddings",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{voyageApiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"input\": [\"This is a test of Voyage AI embeddings\"],\n  \"model\": \"voyage-3-large\",\n  \"input_type\": \"document\"\n}"
+        },
+        "url": {
+          "raw": "https://api.voyageai.com/v1/embeddings",
+          "protocol": "https",
+          "host": ["api", "voyageai", "com"],
+          "path": ["v1", "embeddings"]
+        },
+        "description": "Test Voyage AI embeddings API directly"
+      }
+    },
+    {
+      "name": "Voyage AI - Code Embeddings (voyage-code-3)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{voyageApiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"input\": [\"def hello_world():\\n    print('Hello, World!')\"],\n  \"model\": \"voyage-code-3\",\n  \"input_type\": \"document\"\n}"
+        },
+        "url": {
+          "raw": "https://api.voyageai.com/v1/embeddings",
+          "protocol": "https",
+          "host": ["api", "voyageai", "com"],
+          "path": ["v1", "embeddings"]
+        },
+        "description": "Test Voyage AI code-specific embeddings"
+      }
+    },
+    {
+      "name": "Voyage AI - Batch Embeddings",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{voyageApiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"input\": [\n    \"First document to embed\",\n    \"Second document to embed\",\n    \"Third document to embed\"\n  ],\n  \"model\": \"voyage-3-large\",\n  \"input_type\": \"document\",\n  \"truncation\": true\n}"
+        },
+        "url": {
+          "raw": "https://api.voyageai.com/v1/embeddings",
+          "protocol": "https",
+          "host": ["api", "voyageai", "com"],
+          "path": ["v1", "embeddings"]
+        },
+        "description": "Test batch embeddings with Voyage AI"
+      }
+    }
+  ]
+}
+

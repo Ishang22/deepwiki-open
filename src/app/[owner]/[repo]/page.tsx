@@ -417,97 +417,221 @@ export default function RepoWikiPage() {
 
         // Create the prompt content - simplified to avoid message dialogs
  const promptContent =
-`You are an expert technical writer and software architect.
-Your task is to generate a comprehensive and accurate technical wiki page in Markdown format about a specific feature, system, or module within a given software project.
+`You are a world-class technical writer, software architect, and code analyst with deep expertise in creating comprehensive, crystal-clear technical documentation.
 
-You will be given:
-1. The "[WIKI_PAGE_TOPIC]" for the page you need to create.
-2. A list of "[RELEVANT_SOURCE_FILES]" from the project that you MUST use as the sole basis for the content. You have access to the full content of these files. You MUST use AT LEAST 5 relevant source files for comprehensive coverage - if fewer are provided, search for additional related files in the codebase.
+Your mission is to create an **exceptional, in-depth technical wiki page** about "${page.title}" that serves as the definitive reference for developers working with this codebase.
 
 CRITICAL STARTING INSTRUCTION:
-The very first thing on the page MUST be a \`<details>\` block listing ALL the \`[RELEVANT_SOURCE_FILES]\` you used to generate the content. There MUST be AT LEAST 5 source files listed - if fewer were provided, you MUST find additional related files to include.
-Format it exactly like this:
+The very first thing on the page MUST be a \`<details>\` block listing ALL the \`[RELEVANT_SOURCE_FILES]\` you used:
 <details>
 <summary>Relevant source files</summary>
 
-Remember, do not provide any acknowledgements, disclaimers, apologies, or any other preface before the \`<details>\` block. JUST START with the \`<details>\` block.
 The following files were used as context for generating this wiki page:
 
 ${filePaths.map(path => `- [${path}](${generateFileUrl(path)})`).join('\n')}
-<!-- Add additional relevant files if fewer than 5 were provided -->
 </details>
 
-Immediately after the \`<details>\` block, the main title of the page should be a H1 Markdown heading: \`# ${page.title}\`.
+Immediately after, add the main title: \`# ${page.title}\`
 
-Based ONLY on the content of the \`[RELEVANT_SOURCE_FILES]\`:
+## CONTENT REQUIREMENTS:
 
-1.  **Introduction:** Start with a concise introduction (1-2 paragraphs) explaining the purpose, scope, and high-level overview of "${page.title}" within the context of the overall project. If relevant, and if information is available in the provided files, link to other potential wiki pages using the format \`[Link Text](#page-anchor-or-id)\`.
+### 1. **Executive Summary & Introduction** (2-3 paragraphs)
+   - Start with a compelling overview that answers: What is this? Why does it matter? When would you use it?
+   - Explain the role of "${page.title}" within the broader system architecture
+   - Highlight the key problems it solves and core capabilities
+   - Include links to related components using: \`[Link Text](#page-anchor)\`
+   - Add a "Quick Facts" table with: Language, Dependencies, Entry Points, Key Files
 
-2.  **Detailed Sections:** Break down "${page.title}" into logical sections using H2 (\`##\`) and H3 (\`###\`) Markdown headings. For each section:
-    *   Explain the architecture, components, data flow, or logic relevant to the section's focus, as evidenced in the source files.
-    *   Identify key functions, classes, data structures, API endpoints, or configuration elements pertinent to that section.
+### 2. **Architecture & Design** (Essential)
+   - Provide a comprehensive architectural overview with multiple perspectives:
+     * High-level system context (how this fits into the larger system)
+     * Component-level architecture (internal structure and modules)
+     * Data flow and state management patterns
+   - Create a **detailed architecture diagram** using Mermaid that shows:
+     * All major components and their relationships
+     * Data flow directions
+     * External dependencies and integrations
+   - Explain design patterns, principles, and architectural decisions
+   - Document trade-offs and rationale behind key design choices
 
-3.  **Mermaid Diagrams:**
-    *   EXTENSIVELY use Mermaid diagrams (e.g., \`flowchart TD\`, \`sequenceDiagram\`, \`classDiagram\`, \`erDiagram\`, \`graph TD\`) to visually represent architectures, flows, relationships, and schemas found in the source files.
-    *   Ensure diagrams are accurate and directly derived from information in the \`[RELEVANT_SOURCE_FILES]\`.
-    *   Provide a brief explanation before or after each diagram to give context.
-    *   CRITICAL: All diagrams MUST follow strict vertical orientation:
-       - Use "graph TD" (top-down) directive for flow diagrams
-       - NEVER use "graph LR" (left-right)
-       - Maximum node width should be 3-4 words
-       - For sequence diagrams:
-         - Start with "sequenceDiagram" directive on its own line
-         - Define ALL participants at the beginning using "participant" keyword
-         - Optionally specify participant types: actor, boundary, control, entity, database, collections, queue
-         - Use descriptive but concise participant names, or use aliases: "participant A as Alice"
-         - Use the correct Mermaid arrow syntax (8 types available):
-           - -> solid line without arrow (rarely used)
-           - --> dotted line without arrow (rarely used)
-           - ->> solid line with arrowhead (most common for requests/calls)
-           - -->> dotted line with arrowhead (most common for responses/returns)
-           - ->x solid line with X at end (failed/error message)
-           - -->x dotted line with X at end (failed/error response)
-           - -) solid line with open arrow (async message, fire-and-forget)
-           - --) dotted line with open arrow (async response)
-           - Examples: A->>B: Request, B-->>A: Response, A->xB: Error, A-)B: Async event
-         - Use +/- suffix for activation boxes: A->>+B: Start (activates B), B-->>-A: End (deactivates B)
-         - Group related participants using "box": box GroupName ... end
-         - Use structural elements for complex flows:
-           - loop LoopText ... end (for iterations)
-           - alt ConditionText ... else ... end (for conditionals)
-           - opt OptionalText ... end (for optional flows)
-           - par ParallelText ... and ... end (for parallel actions)
-           - critical CriticalText ... option ... end (for critical regions)
-           - break BreakText ... end (for breaking flows/exceptions)
-         - Add notes for clarification: "Note over A,B: Description", "Note right of A: Detail"
-         - Use autonumber directive to add sequence numbers to messages
-         - NEVER use flowchart-style labels like A--|label|-->B. Always use a colon for labels: A->>B: My Label
+### 3. **Core Components & Implementation** (Deep Dive)
+   For each major component, provide:
+   - **Purpose & Responsibility**: What it does and why it exists
+   - **Interface & API**: Public methods, parameters, return types
+   - **Internal Logic**: How it works (with flowcharts for complex logic)
+   - **Dependencies**: What it relies on and why
+   - **Usage Examples**: Real code snippets showing how to use it
+   - **Edge Cases**: Special scenarios, error handling, validation
+   
+   Create detailed tables for:
+   - Classes/Functions with descriptions, parameters, and return types
+   - Configuration options with types, defaults, and effects
+   - API endpoints with methods, params, responses, and status codes
+   - Data models with fields, types, constraints, and relationships
 
-4.  **Tables:**
-    *   Use Markdown tables to summarize information such as:
-        *   Key features or components and their descriptions.
-        *   API endpoint parameters, types, and descriptions.
-        *   Configuration options, their types, and default values.
-        *   Data model fields, types, constraints, and descriptions.
+### 4. **Visual Diagrams** (Extensively Use Mermaid)
+   Create multiple diagrams to visualize different aspects:
+   
+   **Required Diagram Types:**
+   - **Architecture Diagram**: Overall system structure (graph TD or C4 diagram)
+   - **Sequence Diagrams**: Critical workflows and interactions
+   - **Class Diagrams**: Object relationships and inheritance
+   - **Flowcharts**: Complex logic and decision trees
+   - **State Diagrams**: State machines and lifecycle flows
+   - **ER Diagrams**: Database schema and relationships (if applicable)
+   
+   **Diagram Best Practices:**
+   - Add a descriptive title and context before each diagram
+   - Include a brief explanation after the diagram
+   - Use clear, concise node labels (3-4 words max)
+   - Add annotations for complex relationships
+   - Show both happy paths and error flows
 
-5.  **Code Snippets (ENTIRELY OPTIONAL):**
-    *   Include short, relevant code snippets (e.g., Python, Java, JavaScript, SQL, JSON, YAML) directly from the \`[RELEVANT_SOURCE_FILES]\` to illustrate key implementation details, data structures, or configurations.
-    *   Ensure snippets are well-formatted within Markdown code blocks with appropriate language identifiers.
+### 5. **Data Flow & State Management**
+   - Document how data moves through the system
+   - Show input validation and transformation steps
+   - Explain state management patterns and lifecycle
+   - Include sequence diagrams for multi-step processes
+   - Document data persistence and caching strategies
 
-6.  **Source Citations (EXTREMELY IMPORTANT):**
-    *   For EVERY piece of significant information, explanation, diagram, table entry, or code snippet, you MUST cite the specific source file(s) and relevant line numbers from which the information was derived.
-    *   Place citations at the end of the paragraph, under the diagram/table, or after the code snippet.
-    *   Use the exact format: \`Sources: [filename.ext:start_line-end_line]()\` for a range, or \`Sources: [filename.ext:line_number]()\` for a single line. Multiple files can be cited: \`Sources: [file1.ext:1-10](), [file2.ext:5](), [dir/file3.ext]()\` (if the whole file is relevant and line numbers are not applicable or too broad).
-    *   If an entire section is overwhelmingly based on one or two files, you can cite them under the section heading in addition to more specific citations within the section.
-    *   IMPORTANT: You MUST cite AT LEAST 5 different source files throughout the wiki page to ensure comprehensive coverage.
+### 6. **API Documentation** (If Applicable)
+   Create comprehensive API reference tables with:
+   - Endpoint paths and HTTP methods
+   - Request/response schemas with examples
+   - Authentication and authorization requirements
+   - Error codes and handling
+   - Rate limits and pagination
+   - Example curl commands or code snippets
 
-7.  **Technical Accuracy:** All information must be derived SOLELY from the \`[RELEVANT_SOURCE_FILES]\`. Do not infer, invent, or use external knowledge about similar systems or common practices unless it's directly supported by the provided code. If information is not present in the provided files, do not include it or explicitly state its absence if crucial to the topic.
+### 7. **Configuration & Environment**
+   - Document all configuration options in detailed tables
+   - Show environment variables with types and defaults
+   - Explain configuration file structure and format
+   - Provide example configurations for common scenarios
+   - Document configuration validation and error handling
 
-8.  **Clarity and Conciseness:** Use clear, professional, and concise technical language suitable for other developers working on or learning about the project. Avoid unnecessary jargon, but use correct technical terms where appropriate.
+### 8. **Integration & Usage Examples**
+   - Provide real-world code examples (not just snippets)
+   - Show complete workflows from start to finish
+   - Include error handling and edge cases
+   - Demonstrate best practices and common patterns
+   - Add "Common Pitfalls" section with solutions
 
-9.  **Conclusion/Summary:** End with a brief summary paragraph if appropriate for "${page.title}", reiterating the key aspects covered and their significance within the project.
+### 9. **Performance & Optimization**
+   - Document performance characteristics and bottlenecks
+   - Explain optimization strategies and trade-offs
+   - Include complexity analysis where relevant
+   - Discuss caching, batching, and async patterns
+   - Provide benchmarks or performance guidelines
 
-IMPORTANT: Generate the content in ${language === 'en' ? 'English' :
+### 10. **Error Handling & Troubleshooting**
+   - Document all error types and their meanings
+   - Provide debugging strategies and tools
+   - Include common issues and solutions
+   - Show error recovery patterns
+   - Add troubleshooting decision trees
+
+### 11. **Security Considerations** (If Relevant)
+   - Document authentication and authorization mechanisms
+   - Explain input validation and sanitization
+   - Discuss sensitive data handling
+   - Note security best practices
+   - Highlight potential vulnerabilities and mitigations
+### 12. **Testing & Validation**
+   - Document testing strategies and approaches
+   - Show example test cases and assertions
+   - Explain test coverage and quality metrics
+   - Include integration and unit testing guidance
+   - Provide debugging and validation tips
+
+### 13. **Dependencies & External Integrations**
+   - List all external dependencies with versions
+   - Explain why each dependency is used
+   - Document integration patterns and protocols
+   - Show connection and initialization code
+   - Explain fallback and retry strategies
+
+## FORMATTING & QUALITY STANDARDS:
+
+### Mermaid Diagram Rules:
+**CRITICAL**: All diagrams MUST follow vertical orientation (TD)
+- Use "graph TD" for flow diagrams, NEVER "graph LR"
+- Maximum node width: 3-4 words
+- For sequence diagrams:
+  * Start with "sequenceDiagram" on its own line
+  * Define ALL participants first: "participant A as Name"
+  * Use correct arrow syntax:
+    - \`->>\` solid line with arrow (requests/calls)
+    - \`-->>\` dotted line with arrow (responses/returns)
+    - \`->>+\` activate participant, \`-->>-\` deactivate
+  * Add structural elements: loop, alt/else, opt, par, critical, break
+  * Use notes: "Note over A,B: Description"
+  * Add autonumber for sequence tracking
+- For class diagrams: Show relationships, inheritance, composition
+- For state diagrams: Show transitions, guards, actions
+- Add titles and context for every diagram
+
+### Table Requirements:
+Create comprehensive tables for:
+- **Component Summary**: Name | Purpose | Key Features | Dependencies
+- **API Endpoints**: Method | Path | Params | Response | Auth | Errors
+- **Configuration**: Option | Type | Default | Description | Validation
+- **Data Models**: Field | Type | Required | Constraints | Description
+- **Error Codes**: Code | Meaning | Cause | Resolution
+- **Performance**: Operation | Complexity | Bottlenecks | Optimization
+
+### Code Examples:
+- Include complete, runnable examples (not just fragments)
+- Show imports, initialization, and cleanup
+- Demonstrate error handling patterns
+- Add inline comments explaining key steps
+- Provide both simple and advanced usage examples
+- Include realistic data and scenarios
+
+### Source Citations (MANDATORY):
+**For EVERY statement, diagram, and code example:**
+- Cite specific source files and line ranges
+- Format: \`Sources: [file.ext:10-25]()\` or \`[file.ext:42]()\`
+- Multiple sources: \`Sources: [file1:10-20](), [file2:5]()\`
+- MUST cite AT LEAST 5 different source files
+- Place citations after paragraphs, tables, and diagrams
+
+### Writing Quality:
+- **Depth over Breadth**: Provide thorough, detailed explanations
+- **Context Always**: Explain the "why" not just the "what"
+- **Progressive Detail**: Start high-level, dive deep gradually
+- **Real Examples**: Use actual code and realistic scenarios
+- **Clear Structure**: Use headings, lists, tables, diagrams
+- **Technical Precision**: Use correct terminology consistently
+- **Actionable**: Provide practical guidance developers can use immediately
+
+### Conclusion:
+End with a comprehensive summary that includes:
+- Key takeaways and main concepts
+- How this fits into the larger system
+- Next steps for developers
+- Links to related documentation
+- Common gotchas and best practices
+
+## CRITICAL REQUIREMENTS:
+
+✅ **Accuracy First**: Every statement MUST be based ONLY on the source files
+✅ **Comprehensive Coverage**: Use AT LEAST 5 source files with proper citations
+✅ **Visual Excellence**: Include multiple detailed Mermaid diagrams
+✅ **Practical Value**: Provide actionable, real-world examples
+✅ **Deep Analysis**: Don't just describe—explain why and how
+✅ **Professional Quality**: Write as if this is official product documentation
+✅ **Complete Coverage**: Address architecture, implementation, usage, and troubleshooting
+
+## STRICT RULES:
+❌ **NO speculation** - Only facts from source files
+❌ **NO generic advice** - Everything must be specific to this codebase
+❌ **NO incomplete examples** - Show full, working code
+❌ **NO vague descriptions** - Be precise and detailed
+❌ **NO missing citations** - Cite sources for every claim
+
+## OUTPUT LANGUAGE:
+Generate ALL content in **${language === 'en' ? 'English' :
             language === 'ja' ? 'Japanese (日本語)' :
             language === 'zh' ? 'Mandarin Chinese (中文)' :
             language === 'zh-tw' ? 'Traditional Chinese (繁體中文)' :
@@ -517,12 +641,17 @@ IMPORTANT: Generate the content in ${language === 'en' ? 'English' :
             language === "pt-br" ? "Brazilian Portuguese (Português Brasileiro)" :
             language === "fr" ? "Français (French)" :
             language === "ru" ? "Русский (Russian)" :
-            'English'} language.
+            'English'}** language.
 
-Remember:
-- Ground every claim in the provided source files.
-- Prioritize accuracy and direct representation of the code's functionality and structure.
-- Structure the document logically for easy understanding by other developers.
+## SUCCESS CRITERIA:
+Your wiki page should be so comprehensive and clear that a developer can:
+1. Understand the purpose and architecture immediately
+2. Start using the component within 15 minutes
+3. Debug issues without looking at source code
+4. Contribute improvements confidently
+5. Answer questions for other team members
+
+Create documentation that developers will LOVE to read and reference daily!
 `;
 
         // Prepare request body

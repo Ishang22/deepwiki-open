@@ -29,6 +29,15 @@
       "model": "sentence-transformers/all-MiniLM-L6-v2"
     }
   },
+  "embedder_voyage": {
+    "client_class": "VoyageClient",
+    "batch_size": 10,
+    "model_kwargs": {
+      "model": "voyage-3-large",
+      "input_type": "document",
+      "truncation": true
+    }
+  },
   "retriever": {
     "top_k": 20
   },
