@@ -1,5 +1,5 @@
 {
-  "default_provider": "openai",
+  "default_provider": "azure",
   "providers": {
     "dashscope": {
       "default_model": "qwen-plus",
@@ -178,19 +178,29 @@
       "models": {
         "gpt-4o": {
           "temperature": 0.7,
-          "top_p": 0.8
+          "top_p": 0.9,
+          "max_tokens": 4096,
+          "frequency_penalty": 0.0,
+          "presence_penalty": 0.0
         },
         "gpt-4": {
           "temperature": 0.7,
-          "top_p": 0.8
+          "top_p": 0.9,
+          "max_tokens": 4096,
+          "frequency_penalty": 0.0,
+          "presence_penalty": 0.0
         },
         "gpt-35-turbo": {
           "temperature": 0.7,
-          "top_p": 0.8
+          "top_p": 0.8,
+          "max_tokens": 4096
         },
         "gpt-4-turbo": {
           "temperature": 0.7,
-          "top_p": 0.8
+          "top_p": 0.9,
+          "max_tokens": 4096,
+          "frequency_penalty": 0.0,
+          "presence_penalty": 0.0
         }
       }
     }

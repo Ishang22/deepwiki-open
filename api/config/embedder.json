@@ -35,15 +35,15 @@
     "model_kwargs": {
       "model": "voyage-3-large",
       "input_type": "document",
-      "truncation": true
+      "truncation": false
     }
   },
   "retriever": {
-    "top_k": 20
+    "top_k": 25
   },
   "text_splitter": {
     "split_by": "word",
-    "chunk_size": 350,
-    "chunk_overlap": 100
+    "chunk_size": 500,
+    "chunk_overlap": 150
   }
 }

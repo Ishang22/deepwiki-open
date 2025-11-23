@@ -435,12 +435,16 @@ Immediately after, add the main title: \`# ${page.title}\`
 
 ## CONTENT REQUIREMENTS:
 
+**CRITICAL: Think like a senior software architect conducting a comprehensive code review for a new team member. Provide production-level insights that would take weeks of manual code analysis to discover.**
+
 ### 1. **Executive Summary & Introduction** (2-3 paragraphs)
    - Start with a compelling overview that answers: What is this? Why does it matter? When would you use it?
-   - Explain the role of "${page.title}" within the broader system architecture
-   - Highlight the key problems it solves and core capabilities
+   - **Deep Analysis**: Don't just describe WHAT the code does - explain WHY it was built this way and HOW it achieves its goals
+   - Explain the role of "${page.title}" within the broader system architecture and its dependencies
+   - Highlight the key problems it solves, core capabilities, and design philosophy
    - Include links to related components using: \`[Link Text](#page-anchor)\`
-   - Add a "Quick Facts" table with: Language, Dependencies, Entry Points, Key Files
+   - Add a "Quick Facts" table with: Language, Dependencies, Entry Points, Key Files, Complexity Level
+   - **Value Proposition**: Explain what makes this implementation unique or notable
 
 ### 2. **Architecture & Design** (Essential)
    - Provide a comprehensive architectural overview with multiple perspectives:
@@ -454,14 +458,16 @@ Immediately after, add the main title: \`# ${page.title}\`
    - Explain design patterns, principles, and architectural decisions
    - Document trade-offs and rationale behind key design choices
 
-### 3. **Core Components & Implementation** (Deep Dive)
-   For each major component, provide:
-   - **Purpose & Responsibility**: What it does and why it exists
-   - **Interface & API**: Public methods, parameters, return types
-   - **Internal Logic**: How it works (with flowcharts for complex logic)
-   - **Dependencies**: What it relies on and why
-   - **Usage Examples**: Real code snippets showing how to use it
-   - **Edge Cases**: Special scenarios, error handling, validation
+### 3. **Core Components & Implementation** (Deep Dive - CRITICAL)
+   For each major component, provide comprehensive analysis:
+   - **Purpose & Responsibility**: What it does, why it exists, and what problems it solves
+   - **Interface & API**: Public methods, parameters, return types with actual signatures from code
+   - **Internal Logic**: How it works with flowcharts for complex logic - explain the algorithm/approach
+   - **Dependencies**: What it relies on, why those dependencies were chosen, and potential alternatives
+   - **Usage Examples**: REAL code snippets extracted from the actual repository showing practical usage
+   - **Edge Cases**: Special scenarios, error handling, validation, and failure modes
+   - **Design Decisions**: Explain WHY the code is structured this way - what trade-offs were made
+   - **Performance Characteristics**: Time/space complexity, bottlenecks, optimization opportunities
    
    Create detailed tables for:
    - Classes/Functions with descriptions, parameters, and return types
@@ -613,14 +619,44 @@ End with a comprehensive summary that includes:
 - Links to related documentation
 - Common gotchas and best practices
 
+## DEVIN-LEVEL QUALITY STANDARDS:
+
+**Your goal is to produce documentation that rivals AI software engineers like Devin.**
+
+### Think Like a Senior Architect:
+- Analyze code with the depth of a code review by a 10-year veteran
+- Identify architectural patterns, design decisions, and trade-offs
+- Explain not just WHAT the code does, but WHY it's designed this way and HOW it achieves its goals
+- Surface insights that would take weeks of manual analysis to discover
+
+### Provide Production-Ready Insights:
+- Include performance characteristics, complexity analysis, and optimization opportunities
+- Document failure modes, edge cases, and error recovery strategies
+- Explain scalability considerations and potential bottlenecks
+- Highlight security implications and best practices
+
+### Multi-Dimensional Analysis:
+- **Functional View**: What does it do? How is it used?
+- **Architectural View**: How does it fit into the system? What patterns does it use?
+- **Implementation View**: How is it built? What algorithms/approaches?
+- **Operational View**: How does it behave in production? What can go wrong?
+- **Evolution View**: Why was it built this way? What were the alternatives?
+
+### Make It Actionable:
+- Every section should help developers actually USE or MODIFY the code
+- Provide complete, runnable examples with realistic scenarios
+- Include troubleshooting guides and debugging strategies
+- Explain how to extend, customize, or integrate with the component
+
 ## CRITICAL REQUIREMENTS:
 
 ✅ **Accuracy First**: Every statement MUST be based ONLY on the source files
-✅ **Comprehensive Coverage**: Use AT LEAST 5 source files with proper citations
-✅ **Visual Excellence**: Include multiple detailed Mermaid diagrams
-✅ **Practical Value**: Provide actionable, real-world examples
-✅ **Deep Analysis**: Don't just describe—explain why and how
+✅ **Comprehensive Coverage**: Use AT LEAST 5 source files with proper citations  
+✅ **Visual Excellence**: Include 5-8 detailed Mermaid diagrams minimum
+✅ **Practical Value**: Provide actionable, real-world examples from actual code
+✅ **Deep Analysis**: Explain WHY and HOW, not just WHAT
 ✅ **Professional Quality**: Write as if this is official product documentation
+✅ **Devin-Level Depth**: Match the analysis quality of AI software engineers
 ✅ **Complete Coverage**: Address architecture, implementation, usage, and troubleshooting
 
 ## STRICT RULES:
